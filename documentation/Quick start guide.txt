@@ -1,0 +1,37 @@
+AggreCount quick start guide
+1.	Download the Aggrecount macro
+  a.	Install via the plugin menu “Install…” option
+  b.	Or drag and drop onto the ImageJ toolbar to open in the macro editor
+2.	Place all images for analysis into one folder
+  a.	All images should have the same channels in the same order
+3.	Run Aggrecount from either the plugin menu or the “Run” button in the macro editor
+4.	Select the folder with images for analysis
+5.	Select “Setup”
+6.	Follow instructions to designate nuclei, aggregate, and cell body channels
+  a.	If there is no cell body stain, select nuclei channel
+7.	Select “Get image” to adjust threshold (applied to all images during analysis)
+  a.	Choose an image and adjust threshold
+  b.	Continue until satisfied with threshold
+    i.	Press “Next step”
+8.	Select “Get image” to view aggregate size and distance from nucleus
+  a.	Note size of noise vs signal for size cut off
+  b.	Note distance from nuclear perimeter
+    i.	This distance designates the perinuclear zone
+  c.	Press “Next step”
+9.	Select “Get image” to view different cell body processing methods and strictness
+  a.	Note method and strictness from image titles
+  b.	Press “Next step (settings)”
+10.	Main settings window
+  a.	Threshold values are auto-populated from setup
+  b.	Adjust perinuclear distance, aggregate min/max levels as previously noted
+  c.	Adjust strictness of cell body processing and method as previously noted
+  d.	Adjust other settings as desired (see below for explanations)
+  e.	Batch mode
+    i.	Unchecked
+      1.	Macro will pause after acquiring ROIs and show user
+      2.	Useful to ensure fidelity of processing and ROI capture before running a batch mode analysis
+    ii.	Checked
+      1.	Macro will proceed to analyze all images in folder in the background
+      2.	Useful when processing an entire experiment
+11.	Data files will be saved after all images have been analyzed in the folder selected
+  a.	Look for “AC_analysis#” folder
