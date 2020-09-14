@@ -1,0 +1,221 @@
+Instructions for AggreCount analysis
+
+Sample images and macro code are available  at:
+https://tufts.box.com/s/ys3kktb5ujdnilyqu8mnup3mrtiej6b6
+
+AggreCount analysis setup
+	Users may decide to follow the setup process outlined below or manually input settings by selecting “Setup” or “Manual input” after selecting image analysis folder. It is recommended that users utilize the set-up process for first time analyses of an experiment to help select proper settings.
+1.	Open FIJI (v1.52p or later)
+2.	Download the AggreCount macro
+a.	Install using the “Install…” option under the “Plugin” menu in the ImageJ toolbar
+b.	Alternatively, drag and drop the Aggrecount macro icon onto the ImageJ toolbar to open Aggrecount in the macro editor
+3.	Place all images for analysis into one folder
+a.	All images supported by the Bio-Formats importer may be used, however, images must contain multiple channels
+4.	Select the Aggrecount macro from the “Macros” menu under the “Plugins” menu in the ImageJ toolbar
+a.	Alternatively, select “Run” from the bottom of the macro editor window
+5.	Select the folder with images for analysis
+6.	The macro will automatically open the first image and ask the user to select the channels for nuclei, aggregates, and cell body
+a.	Change the channel to the immunostain specified by the window and select “Okay”
+b.	If there is no stain for cell bodies, select the nuclei channel
+7.	The next window will prompt the user to get an image to adjust thresholding
+a.	Select “Get image” and choose an image with aggregates
+b.	Adjust the threshold so aggregates are highlighted in red with as little background as possible and click “Okay”
+i.	Do not close the threshold window
+c.	Select “Get image” again and choose an image without aggregates
+d.	The previous threshold will be shown, adjust appropriately and click “Okay”
+e.	Select “Get image” again and choose an image with aggregates
+f.	Adjust threshold as previously mentioned and click okay
+g.	Either continue cycling through images to adjust threshold or, when satisfied, select “Next step”
+i.	This threshold will be applied to all images in the analysis
+8.	The next window will prompt the user to get an image for determining aggregate size cutoff and perinuclear distance cutoff
+a.	Select “Get image” and choose an image with aggregates
+b.	The macro will identify aggregates using the previously set threshold and nuclei using an automated thresholding system
+c.	The image will be displayed with the size of each aggregate in square microns as well as the distance from the nucleus perimeter in pixels
+d.	Use the “+” and “-” buttons on the keyboard to zoom in and out of the image
+e.	Note the smallest and largest size of ‘true’ aggregates vs noise as well as the distance from the nucleus
+i.	The default setting for the perinuclear zone is 10 pixels for 60x magnification images, this may need to be adjusted for images of different magnification
+ii.	The default setting for aggregate size is 0.1 – 25mm2 which is applicable to most aggregate images
+f.	Select “Okay” when finished noting sizes and distances
+g.	Either continue cycling through images to note sizes and distances or select “Next step” to proceed
+9.	The next window will prompt the user to get an image to determine which cell body processing method and strictness will work best
+a.	The default setting of “Segmentation” with strictness of 5 is optimized to work with most images
+i.	Dense cells require lower strictness for segmentation and higher strictness for thresholding
+ii.	Strictness values are optimized to fall between 1 and 10, however, any non-zero value will be accepted but may result in reduced processing quality
+b.	Select “Get image” and choose one of the sample images
+c.	The macro will automatically process this image in 3 different strictness for both thresholding and segmentation types of cell body processing
+d.	This may take a minute
+e.	The macro will display the results of each processing method and strictness
+i.	The best one will be the image that has each cell in its own ROI
+ii.	ROIs without a nucleus will not be included in the analysis, however, excessive segmentation may slow processing speed
+iii.	Note the best method and strictness from the image titles
+f.	Either continue cycling through images to adjust threshold or, when satisfied, select “Next step (settings)” to continue to the main settings window
+AggreCount main settings window
+	The main settings window will allow users to adjust the parameters described below. Some of these parameters may be populated from performing the setup. Settings are reset to default settings each time the macro is run. Settings from previous runs are saved in the “aggresettings.txt” file within the AC_analysis folder if “Save results” is checked. 
+1.	Aggregate thresholding lower/upper
+a.	The threshold values will be auto-populated from the user-selected threshold during setup
+b.	This threshold values may be adjusted in this window
+2.	Perinuclear distance cutoff
+a.	The distance from the nuclear perimeter that defines the perinuclear zone measured in pixels
+3.	Aggresome min size
+a.	The size cutoff for designating a perinuclear aggregate an aggresome
+4.	Aggregate min/max size
+a.	Size cutoff for aggregate ROI acquisition
+b.	Aggregate ROIs smaller or larger than these values will not be captured
+5.	Nuclei size/strictness
+a.	Minimum size of nuclei (helps exclude noise)
+b.	Strictness defines the amount of background subtraction during nuclei processing
+i.	Lower values decrease background subtraction, higher values increase it
+6.	Cell size/strictness
+a.	Minimum size of cell ROIs (helps to exclude noise)
+b.	Strictness alters cell body processing depending on the method
+i.	Thresholding strictness increases or decreases background subtraction in the same manner as nuclei strictness
+ii.	Segmentation strictness defines the “prominence” value in the “Find maxima…” function
+1.	Smaller strictness values will increase total number of segments while larger values to decrease it
+2.	Cell segments are checked for nuclei and segments without nuclei are deleted
+7.	Nuclei/aggregates/Cell bodies channel/slice/frame
+a.	These fields are auto-populated from earlier in the setup process
+b.	If the images do not have slices (z-stack) or frames (movie), these values should be 1
+c.	If the images do not have a cell bodies channel, do not change these values and uncheck “Find cell bodies”
+d.	NOTE – all images to be analyzed must have all channels in the same order
+8.	Find cell bodies checkbox
+a.	If checked, the macro will find cell bodies using the processing method and strictness designated, aggregate distance will be calculated from the nucleus within the same cell and will output cell-by-cell data in the save file dataset_cells
+b.	If unchecked, the macro will not find cell bodies, aggregate distance will be calculated from the closest nuclei, and will output image summary data and aggregate data but not single cell data
+9.	Cell processing method
+a.	Segmentation uses the “Find maxima…” function in ImageJ to locate cell centers and then uses a watershed algorithm to create a Voronoi diagram. This is used to find cell ROIs which are checked for nuclei
+b.	Thresholding uses the “Enhance contrast…” function to increase fluorescent signal, then adds in nuclei area before applying an automated threshold
+10.	Save results
+a.	If checked, the macro will create a new folder in the image analysis folder previously selected named “AC_analysis#” where individual data files and ROI files as well as dataset files will be saved
+b.	If unchecked, the macro will create tables in ImageJ with all data captured but will not save it
+i.	The user may manually save this data if wanted
+11.	Batch mode
+a.	If checked, the macro will proceed to analyze all images in the folder selected in the background without user input, greatly increasing processing speed
+b.	If unchecked, the macro will prompt user before each image as well as display ROIs for nuclei, aggregates, and cells after capture
+c.	It is suggested that users uncheck batch mode before running a batch analysis to ensure fidelity of ROI capture for a subset of images
+AggreCount analysis (non-batch mode)
+1.	After proceeding through AC setup or manually entering AC settings, leave “Batch mode?” unchecked and press “OK”
+2.	For each file that is in the folder, the user will be prompted to analyze it (“Continue”), skip it (“Skip”), or quit the macro (“Cancel”)
+a.	Non-image files or incompatible image files may appear but will be skipped even if the user selects “Continue”
+3.	After pressing “Continue”, nuclei will be processed, and an auto-threshold applied. The nuclei ROIs will be displayed for the user to view
+a.	If nuclei ROIs are too large or there is excess noise, consider increasing nuclei processing strictness in the main menu
+b.	If nuclei ROIs are too small or nuclei are being excluded, consider decrease nuclei processing strictness in the main menu
+i.	To change nuclei processing strictness, quit out of the macro, run it again, and select “Manual input” to input desired settings
+c.	Select “OK” to continue
+4.	Aggregates will be processed, and a threshold applied (as previously set by the user). The aggregate ROIs will be displayed for the user to view
+a.	If aggregate thresholding requires further refinement, consider quitting the macro and restarting the setup process
+b.	Select “OK” to continue
+5.	Cells will be processed as previously determined by the user (method and strictness). The cell ROIs will be displayed for the user to view
+a.	Thresholding
+i.	If ROIs are too large or multiple cells are captured in one ROI, consider increasing cell processing strictness
+ii.	If ROIs are too small or cells are being excluded, consider decreasing cell processing strictness
+b.	Segmentation
+i.	If ROIs are too large and contain multiple cells, consider decreasing cell processing strictness
+ii.	If ROIs are too small and are splitting cells, consider increasing cell processing strictness
+c.	Select “OK” to continue
+6.	Aggregates and nuclei will be assigned to cells and aggregate localization is determined
+a.	The dataset tables and the image data table will be updated with the values from the current image
+7.	The macro will pause after the entire analysis has been finished and will display the image along with all ROIs captured (nuclei, cell bodies and aggregates)
+a.	Additionally, data will be presented in the “Data” table with cells and aggregates for the user to view
+b.	Select “OK” to continue
+8.	The macro will again present files in the folder for the user to analyze or skip
+a.	The user may proceed through all the images in this manner
+b.	NOTE – the dataset tables will NOT save unless all files have been analyzed or skipped. To save these tables after canceling the macro run, select “File” -> “Save” on the table window.
+AggreCount analysis (batch mode)
+
+1.	After proceeding through AC setup or manually entering AC settings, check “Batch mode?” and press “OK”
+2.	All images will be analyzed in the folder selected
+3.	Four tables will be visible to the user
+a.	Dataset_summary
+b.	Dataset_aggregates
+c.	Dataset_cells (if “Find cells” is checked)
+d.	Data
+4.	Each will be updated after each image is processed
+5.	Each line in Dataset_summary represents an image file so this table is ideal for tracking analysis process
+6.	WARNING – do not close these tables or select specific lines as it may interfere with the analysis
+a.	These tables may be minimized
+7.	If the user wishes to cancel the batch mode analysis, close the Dataset tables
+8.	After the analysis is finished, the tables are saved to the “AC_analysis#” folder in the folder containing images 
+Analysis output
+All data files are saved as tab-delimited .txt files. These may be easily imported into excel or another data processing software. In addition to the data tables described below, ROIs for each image are saved as .zip files within the AC_analysis folder. Each ROI zip file contains ROIs for cells, nuclei, and aggregates in that order.
+Dataset_summary
+Summary data by image
+	File – Filename
+	Cells – Number of cells imaged (uses # of nuclei)
+	Aggregates per cell – Total aggregates in image divided by total number of cells (nuclei)
+	Aggregate area per cell – Total aggregate area in image divided by total number of cells
+	Avg aggregate size – Total aggregate area divided by total aggregates
+	Cells with aggregates* – Total number of cells with any type of aggregate
+	% cells with aggregates* – Percentage of all cells with any type of aggregate
+	Cells with aggresome* – Total number of cells with an aggregate above the user defined size cutoff within the perinuclear zone (aggresome)
+	% cells with aggresome* – Percentage of all cells with an aggregate above the user defined size cutoff within the perinuclear zone (aggresome)
+	Total aggresomes** - Total number of aggresomes in the image
+	% aggs perinuclear – Perinuclear aggregates divided by total aggregates
+	% aggs cytosolic – Cytosolic aggregates divided by total aggregates
+	% aggs nuclear – Nuclear aggregates divided by total aggregates
+	Perinuclear aggregates per cell – Total perinuclear aggregates divided by total cells (nuclei)
+	Perinuclear aggregate area per cell – Total perinuclear aggregate area divided by total cells (nuclei)
+	Cytosolic aggregates per cell – Total cytosolic aggregates divided by total cells (nuclei)
+	Cytosolic aggregate area per cell – Total cytosolic aggregate area divided by total cells (nuclei)
+	Nuclear aggregates per cell – Total nuclear aggregates divided by total cells (nuclei)
+	Nuclear aggregate area per cell – Total nuclear aggregate area divided by total cells (nuclei)
+Dataset_cells*
+Summary data by cell
+	File – Filename of the image that contains the cell
+	Nuclei – Number of nuclei contained within a cell ROI
+	Aggregates – Total number of aggregates within a cell
+	Aggregate area – Total aggregate area within a cell (um^2)
+	Avg aggregate size – Total aggregates within the cell divided by total aggregate area within the cell
+	Cytosolic aggregates – Total number of cytosolic aggregates within a cell
+	Cytosolic agg area – Total cytosolic aggregate area within a cell
+	Avg cyt agg size – Average cytosolic aggregate size within a cell
+	Perinuclear aggregates – Total number of perinuclear aggregates within a cell
+	Perinuclear agg area – Total perinuclear aggregate area within a cell
+	Avg cyt agg size – Average cytosolic aggregate size within a cell
+	Nuclear aggregates – Total number of nuclear aggregates within a cell
+	Nuclear agg area – Total nuclear aggregate area within a cell
+	Avg cyt agg size – Average cytosolic aggregate size within a cell
+	Largest perinuclear agg – Size of the largest perinuclear aggregate within the perinuclear zone
+	Area – Total area of a cell ROI
+	Mean – Mean fluorescent intensity from a cell ROI
+	StDev – Standard deviation of fluorescent intensity from a cell ROI
+Dataset_aggregates
+Summary data by aggregate
+	File – Filename of image that contains the aggregate
+	Location – Cellular compartment of an aggregate (nuclear, perinuclear, cytosolic)
+	Distance – Distance in pixels between the nearest edge of an aggregate to a nucleus ROI
+	Area – Area of the aggregate
+	Mean – Mean fluorescent intensity from aggregate ROI
+	StDev – Standard deviation of the fluorescent intensity from aggregate ROI 
+‘Image name’_analysis
+Summary data for a specific image. Contains data for both cell and aggregate ROIs
+	Class – Classification of ROI: cell, aggregate, aggresome
+	Cell # - Cell ID that links aggregates to cells
+	Location – Subcellular location of aggregates (cytosolic, perinuclear, nuclear). Cell ROIs will be labeled “NA”
+	Area – Area of a ROI
+	Mean – Mean fluorescence intensity of a ROI
+	StDev – Standard deviation of fluorescence intensity of a ROI
+	Nuclei* – Number of nuclei contained within a cell ROI
+o	Aggregate ROIs will have “0” in this column
+	Aggregates* – Total number of aggregates in a cell
+o	Aggregate ROIs will have “0” in this column
+	Aggregate area* – Total sum of aggregate area in a cell
+o	Aggregate ROIs will have “0” in this column
+	Cytosolic agg* – Total number of cytosolic aggregates in a cell
+o	Aggregate ROIs will have “0” in this column
+	Cytosolic agg area* – Total sum of cytosolic aggregate area in a cell
+o	Aggregate ROIs will have “0” in this column
+	Perinuclear agg* – Total number of perinuclear aggregates in cell
+o	Aggregate ROIs will have “0” in this column
+	Perinuclear agg area* – Total sum of perinuclear aggregate area in a cell
+o	Aggregate ROIs will have “0” in this column
+	Nuclear agg* – Total number of nuclear aggregates in a cell
+o	Aggregate ROIs will have “0” in this column
+	Nuclear agg area* – Total sum of nuclear aggregate area in a cell
+o	Aggregate ROIs will have “0” in this column
+	Aggresomes* – Total number of aggresomes in a cell
+o	Aggregate ROIs will have “0” in this column
+	Aggresome area* – Total aggresome area in a cell
+o	Aggregate ROIs will have “0” in this column
+	Distance – Aggregate distance in pixels from a nucleus ROI perimeter
+o	Cell ROIs will have “0” in this column
+*designates fields or data tables that are only present in analyses that use cell ROIs
+** designates fields that are only present in analyses that do not use cell ROIs
