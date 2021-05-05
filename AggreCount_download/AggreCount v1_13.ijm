@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------
-//                    Aggrecount v1.12 2020
+//                    Aggrecount v1.13 2021
 //------------------------------------------------------------------------
 /*
  * Welcome to the Aggrecount Macro developed by the Raman Lab at Tufts University, Boston, MA
